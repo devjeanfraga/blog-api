@@ -1,0 +1,11 @@
+{
+  "name": "blog-api",
+  "version": "1.0.0",
+  "description": "blog api to practice my learning",
+  "main": "index.js",
+  "author": "Jean Fraga <jeandevjs@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^4.6.2"
+  }
+}
