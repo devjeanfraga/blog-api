@@ -1,22 +1,35 @@
 import { SignUpController } from "./signup"
 import { HttpRequest } from "@src/presentation/protocols/http"
+import { EmailValidator } from "@src/presentation/protocols/email-validator"
 
 const makeFakeRequest = (): HttpRequest => ({
   body: {
-
+    name: 'any-name',
     email: 'any@mail.com',
     password: 'any-password',
     passwordConfirm: 'any-password'
   }
 })
 
+const makeEmailValidator = (): EmailValidator => {
+  class EmailValidatorStub implements EmailValidator {
+    public isValidEmail (email: string): boolean {
+      return true
+    }
+  }
+  return new EmailValidatorStub()
+}
+
 interface TypesSut {
-  sut: SignUpController
+  sut: SignUpController,
+  emailValidatorStub: EmailValidator
 }
 const makeSut = (): TypesSut  => {
-  const sut = new SignUpController()
+  const emailValidatorStub = makeEmailValidator()
+  const sut = new SignUpController(emailValidatorStub)
   return {
-    sut
+    sut,
+    emailValidatorStub
   }
 }
 
@@ -24,12 +37,29 @@ describe('SignUp Controller', () => {
   
   it('Should return an Error if any field missing', async () => {
       const { sut } = makeSut()
-      const error = await sut.handle(makeFakeRequest())
+      const fakeHttpRequest = {
+        body: {
+          name: 'any-name',
+          email: 'any@mail.com',
+          // password: 'any-password',
+          passwordConfirm: 'any-password'
+        }
+      }
+      const error = await sut.handle(fakeHttpRequest)
       const response = {
         body: new Error('some field is required'),
         statusCode: 400
       }
       
       expect(error).toEqual(response)
-  } )
+  })
+
+  it('Should call EmailValidator with correct values',   () => {
+    const { sut, emailValidatorStub } = makeSut()
+    const spyIsValidMail = jest.spyOn(emailValidatorStub, 'isValidEmail')
+
+    sut.handle(makeFakeRequest())
+    expect(spyIsValidMail).toHaveBeenCalledWith(makeFakeRequest().body.email)
+  })
+
 })
