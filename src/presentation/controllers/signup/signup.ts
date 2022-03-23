@@ -1,19 +1,28 @@
 import { Controller } from "@src/presentation/protocols/controller"
 import { HttpRequest, HttpResponse } from "@src/presentation/protocols/http"
+import { EmailValidator } from "@src/presentation/protocols/email-validator"
 
-export class SignUpController implements Controller {
+export class SignUpController implements Controller{
 
-  public async handle (httpRequest: HttpRequest):  Promise<HttpResponse> {
-    const {name, email, password, passwordConfirm} = httpRequest.body
+  private readonly emailValidator: EmailValidator
 
-    const fields = ['name', 'email', 'password', 'passwordConfirm']
+  constructor (emailValidator: EmailValidator) {
+    this.emailValidator = emailValidator
+  }
+
+  public  handle (httpRequest: HttpRequest): HttpResponse {
+
+      const fields = ['name', 'email', 'password', 'passwordConfirm']
 
       for( const field of fields) {
         if(!httpRequest.body[field]) {
           const requiredField = (): HttpResponse => ({ statusCode: 400, body: new Error('some field is required') })
           return requiredField()
+          //return new Promise(resolve => resolve(requiredField()))
+        }
       }
-    }
-    return new Promise(resolve => resolve)
+      
+      this.emailValidator.isValidEmail(httpRequest.body.email)
+      return null
   }
 }
