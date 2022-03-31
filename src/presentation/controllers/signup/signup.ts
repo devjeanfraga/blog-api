@@ -43,12 +43,15 @@ export class SignUpController implements Controller{
       }
 
       const { name, email, password } = httpRequest.body
-      this.addAccount.add( {
+      const newAccount = this.addAccount.add( {
         name,
         email, 
         password
       })
-      
-      return null
+
+      return {
+        statusCode: 200,
+        body: newAccount
+      }
   }
 }
