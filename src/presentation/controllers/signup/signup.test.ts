@@ -115,9 +115,9 @@ describe('SignUp Controller', () => {
 
       sut.handle(makeFakeRequest())
       expect(spyIsValidMail).toHaveBeenCalledWith(makeFakeRequest().body.email)
-    })
+  })
   
-  it('Should return an InvalidParamsErrror if Emailvalidator return false', () => {
+  it('Should return an InvalidParamErrror if Emailvalidator return false', () => {
     const { sut, emailValidatorStub } = makeSut()
     jest.spyOn(emailValidatorStub, 'isValidEmail').mockReturnValueOnce(false)
 
@@ -127,6 +127,25 @@ describe('SignUp Controller', () => {
       body: new InvalidParamError('email')
     })
 
+  })
+
+  it('Should return an InvalidParamError if password field donts match', ()=> {
+    const { sut } = makeSut()
+
+    const request = {
+      body: {
+        name: 'any-name',
+        email: 'any@mail.com',
+        password: 'any-password',
+        passwordConfirm: 'any-fail-password'
+      }
+    }
+
+    const promise = sut.handle(request)
+    expect(promise).toEqual({
+      statusCode: 400,
+      body: new InvalidParamError('password')
+    })
   })
 
 
