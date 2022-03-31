@@ -183,18 +183,18 @@ describe('SignUp Controller', () => {
     expect(spyAdd).toHaveBeenCalledWith(validRequest)
   })
 
-  // it('Should return 200 if valid data is provided', () => {
-  //   const { sut } =makeSut()
+  it('Should return 200 if valid data is provided', () => {
+    const { sut } =makeSut()
 
-  //   const response = sut.handle(makeFakeRequest())
-  //   expect(response.statusCode).toBe(200)
-  //   expect(response.body).toEqual({
-  //     id: 'any-id',
-  //     name: 'any-name',
-  //     email: 'any@mail.com',
-  //     password: 'hashed-password'
-  //   })
-  // })
+    const response = sut.handle(makeFakeRequest())
+    expect(response.statusCode).toBe(200)
+    expect(response.body).toEqual({
+      id: 'any-id',
+      name: 'any-name',
+      email: 'any@mail.com',
+      password: 'hashed-password'
+    })
+  })
 
 
 })
