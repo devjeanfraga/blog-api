@@ -2,6 +2,7 @@ import { Controller } from "@src/presentation/protocols/controller"
 import { HttpRequest, HttpResponse } from "@src/presentation/protocols/http"
 import { EmailValidator } from "@src/presentation/protocols/email-validator"
 import { MissingParamError } from "@src/presentation/errors/missing-param-error"
+import { InvalidParamError } from "@src/presentation/errors/invalid-param-error"
 
 export class SignUpController implements Controller{
 
@@ -23,7 +24,14 @@ export class SignUpController implements Controller{
         }
       }
       
-      this.emailValidator.isValidEmail(httpRequest.body.email)
+      
+      const isEmail = this.emailValidator.isValidEmail(httpRequest.body.email)
+      if(!isEmail) {
+        return {
+          statusCode: 400,
+          body: new InvalidParamError('email')
+        }
+      }
       return null
   }
 }
