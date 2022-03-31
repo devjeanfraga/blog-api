@@ -4,6 +4,7 @@ import { EmailValidator } from "@src/presentation/protocols/email-validator"
 import { MissingParamError } from "@src/presentation/errors/missing-param-error"
 import { InvalidParamError } from "@src/presentation/errors/invalid-param-error"
 import { AddAccount } from "@src/domain/usecases/add-account"
+import { ServerError } from "@src/presentation/errors/server-error"
 
 export class SignUpController implements Controller{
 
@@ -15,8 +16,9 @@ export class SignUpController implements Controller{
     this.addAccount = addAccount
   }
 
-  public  handle (httpRequest: HttpRequest): HttpResponse {
+  public  async  handle (httpRequest: HttpRequest): Promise<HttpResponse> {
 
+    try {
       const fields = [ 'name', 'email', 'password', 'passwordConfirm']
 
       for( const field of fields) {
@@ -53,5 +55,13 @@ export class SignUpController implements Controller{
         statusCode: 200,
         body: newAccount
       }
+    } catch (err) {
+      return { 
+        statusCode: 500,
+        body: new ServerError(err)
+      }
+    }
+
+  
   }
 }
