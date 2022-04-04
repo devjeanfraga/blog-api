@@ -5,7 +5,7 @@ import { Hasher } from "@src/data/protocols/criptography/hasher";
 export class DbAddAccount implements AddAccount {
   constructor(private readonly hasher: Hasher) {}
   public async add (account: AddAccountModel ): Promise<AccountModel> {
-      this.hasher.hash(account.password)
+      await this.hasher.hash(account.password)
       return new Promise(resolve => resolve(null) )
   } 
 }
