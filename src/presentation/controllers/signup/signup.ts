@@ -5,15 +5,16 @@ import { MissingParamError } from "@src/presentation/errors/missing-param-error"
 import { InvalidParamError } from "@src/presentation/errors/invalid-param-error"
 import { AddAccount } from "@src/domain/usecases/add-account"
 import { ServerError } from "@src/presentation/errors/server-error"
+import { SendEmail } from "@src/domain/usecases/send-mail"
 
 export class SignUpController implements Controller{
 
-  private readonly emailValidator: EmailValidator
-  private readonly addAccount: AddAccount
-
-  constructor (emailValidator: EmailValidator, addAccount: AddAccount) {
-    this.emailValidator = emailValidator
-    this.addAccount = addAccount
+  constructor ( 
+    private readonly emailValidator: EmailValidator, 
+    private readonly addAccount: AddAccount,
+    private readonly sendVerificationEmail: SendEmail
+  ) {
+  
   }
 
   public  async  handle (httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -45,15 +46,18 @@ export class SignUpController implements Controller{
       }
 
       const { name, email, password } = httpRequest.body
-      const newAccount = this.addAccount.add( {
+      const account = await this.addAccount.add( {
         name,
         email, 
         password
       })
 
+      this.sendVerificationEmail.send(account)
+
+
       return {
         statusCode: 200,
-        body: newAccount
+        body: account
       }
     } catch (err) {
       return { 
