@@ -6,6 +6,7 @@ import { InvalidParamError } from "@src/presentation/errors/invalid-param-error"
 import { AddAccount } from "@src/domain/usecases/add-account"
 import { ServerError } from "@src/presentation/errors/server-error"
 import { SendEmail } from "@src/domain/usecases/send-mail"
+import { badRequest, ok, serverError } from "@src/presentation/helpers/http-helpers"
 
 export class SignUpController implements Controller{
 
@@ -24,25 +25,17 @@ export class SignUpController implements Controller{
 
       for( const field of fields) {
         if(!httpRequest.body[field]) {
-          const requiredField = (): HttpResponse => ({ statusCode: 400, body: new MissingParamError(field) })
-          return requiredField()
-          //return new Promise(resolve => resolve(requiredField()))
+          return badRequest(new MissingParamError(field))
         }
       }
       
       const isEmail = this.emailValidator.isValidEmail(httpRequest.body.email)
       if(!isEmail) {
-        return {
-          statusCode: 400,
-          body: new InvalidParamError('email')
-        }
+        return badRequest(new InvalidParamError('email'))   
       }
 
       if( httpRequest.body.password != httpRequest.body.passwordConfirm ) {
-        return {
-          statusCode: 400,
-          body: new InvalidParamError('password')
-        }
+        return badRequest(new InvalidParamError('password'))
       }
 
       const { name, email, password } = httpRequest.body
@@ -54,16 +47,10 @@ export class SignUpController implements Controller{
 
       this.sendVerificationEmail.send(account)
 
+      return ok(account)
 
-      return {
-        statusCode: 200,
-        body: account
-      }
     } catch (err) {
-      return { 
-        statusCode: 500,
-        body: new ServerError(err)
-      }
+      return serverError(err)
     }
 
   
