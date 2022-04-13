@@ -1,5 +1,9 @@
-import { AccountModel } from "../model/account-model";
+export type SendMailParams =  {
+  to: string,
+  subject: string,
+  text: string
+}
 
-export interface SendEmail {
-  send ( credentials: AccountModel ): void 
+export interface SendMail {
+  sendMail (params: SendMailParams): Promise<void> 
 }

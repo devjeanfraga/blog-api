@@ -4,16 +4,17 @@ import { EmailValidator } from "@src/presentation/protocols/email-validator"
 import { MissingParamError } from "@src/presentation/errors/missing-param-error"
 import { InvalidParamError } from "@src/presentation/errors/invalid-param-error"
 import { AddAccount } from "@src/domain/usecases/add-account"
-import { ServerError } from "@src/presentation/errors/server-error"
-import { SendEmail } from "@src/domain/usecases/send-mail"
 import { badRequest, ok, serverError } from "@src/presentation/helpers/http-helpers"
+import { DirectEmail } from "@src/data/usecases/direct-email"
+
+
 
 export class SignUpController implements Controller{
 
   constructor ( 
     private readonly emailValidator: EmailValidator, 
     private readonly addAccount: AddAccount,
-    private readonly sendVerificationEmail: SendEmail
+    private readonly directEmail: DirectEmail
   ) {
   
   }
@@ -45,7 +46,11 @@ export class SignUpController implements Controller{
         password
       })
 
-      this.sendVerificationEmail.send(account)
+      this.directEmail.sendMail({
+        to: email,
+        subject: 'Verification Email',
+        text: `Welcome ${name}, click on link to verify your email`
+      })
 
       return ok(account)
 
