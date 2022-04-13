@@ -1,8 +1,8 @@
 import { DbAddAccount } from './db-add-account'
-import { Hasher } from '@src/data/protocols/criptography/hasher'
+import { Hasher } from '@src/data/protocols/hasher'
 import { AddAccount, AddAccountModel } from '@src/domain/usecases/add-account'
 import { AccountModel } from '@src/domain/model/account-model'
-import { AddAccountRepository } from '@src/data/protocols/db/add-account-repository'
+import { AddAccountRepository } from '@src/data/protocols/add-account-repository'
 
 describe('DbAddAccount', () => {
 
