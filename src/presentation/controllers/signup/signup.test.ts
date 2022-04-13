@@ -6,7 +6,9 @@ import { InvalidParamError } from '@src/presentation/errors/invalid-param-error'
 import { AddAccount, AddAccountModel} from '@src/domain/usecases/add-account'
 import { AccountModel } from '@src/domain/model/account-model'
 import { ServerError } from '@src/presentation/errors/server-error'
-import { SendEmail } from '@src/domain/usecases/send-mail'
+import { SendMail, SendMailParams } from '@src/domain/usecases/send-mail'
+import { serverError } from '@src/presentation/helpers/http-helpers'
+
 
 
 const makeFakeRequest = (): HttpRequest => ({
@@ -43,31 +45,40 @@ const makeAddAccount = (): AddAccount => {
   return new AddAccountStub()
 }
 
-const makeSendEmail = (): SendEmail => {
-  class SendEmailStub implements SendEmail {
-    public send(credentials: AccountModel): void {
+const makeSendMail = (): SendMail => {
+  class SendMailStub implements SendMail {
+    sendMail(params: SendMailParams): Promise<void> {
       return null
     }
   }
-  return new SendEmailStub()
+  return new SendMailStub()
 }
+
+const makeThrowError = (): never => {
+  throw new Error()
+  //never: nunca retorne algo
+  //void pode receber null e undefined
+  //never não podew receber nada.  
+}
+
+
 
 interface TypesSut {
   sut: SignUpController,
   emailValidatorStub: EmailValidator,
-  addAccountStub: AddAccount
-  sendEmailStub: SendEmail
+  addAccountStub: AddAccount,
+  sendMailStub: SendMail
 }
 const makeSut = (): TypesSut  => {
-  const sendEmailStub = makeSendEmail()
+  const sendMailStub = makeSendMail()
   const addAccountStub = makeAddAccount()
   const emailValidatorStub = makeEmailValidator()
-  const sut = new SignUpController(emailValidatorStub, addAccountStub, sendEmailStub)
+  const sut = new SignUpController(emailValidatorStub, addAccountStub, sendMailStub)
   return {
     sut,
     emailValidatorStub,
     addAccountStub,
-    sendEmailStub
+    sendMailStub
   }
 }
 
@@ -198,6 +209,25 @@ describe('SignUp Controller', () => {
     expect(spyAdd).toHaveBeenCalledWith(validRequest)
   })
 
+  it('Should calls sendMail with correct values', async () => {
+    const { sut, sendMailStub } = makeSut()
+    const spySendMail = jest.spyOn(sendMailStub, 'sendMail')
+
+    await sut.handle(makeFakeRequest())
+    expect(spySendMail).toHaveBeenCalledWith({
+      to: makeFakeAccount().email,
+      subject: 'Verification Email',
+      text: `Welcome ${ makeFakeAccount().name }, click on link to verify your email`
+    })
+  })
+
+  it('Should return 500 if SendMail throws', async ()=> {
+    const { sut, sendMailStub } = makeSut()
+    jest.spyOn( sendMailStub, 'sendMail').mockImplementationOnce(makeThrowError)
+
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error))
+  }) 
 
   it('Should return 200 if valid data is provided', async () => {
     const { sut } = makeSut()
@@ -212,27 +242,7 @@ describe('SignUp Controller', () => {
     })
   })
 
-  it('Should calls SendVerificationEmail with correct values', async () => {
-    const { sut, sendEmailStub } = makeSut()
-    const spySend = jest.spyOn( sendEmailStub, 'send')
 
-    await sut.handle(makeFakeRequest())
-    expect(spySend).toHaveBeenCalledWith(makeFakeAccount())
-  })
-
-  it('Should return 500 if addAccount failure', async () => {
-    const { sut, addAccountStub } = makeSut()
-    jest.spyOn(addAccountStub, 'add').mockImplementationOnce(()=> {
-      throw new Error()
-    })
-
-    const promise = await sut.handle(makeFakeRequest())
-    expect(promise).toEqual( {
-    statusCode: 500,
-    body: new ServerError('anyError')
-    }) 
-
-  })
 
 
 })
