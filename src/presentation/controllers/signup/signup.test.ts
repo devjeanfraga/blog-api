@@ -242,7 +242,19 @@ describe('SignUp Controller', () => {
     })
   })
 
+  it('Should return 500 if addAccount failure', async () => {
+    const { sut, addAccountStub } = makeSut()
+    jest.spyOn(addAccountStub, 'add').mockImplementationOnce(()=> {
+      throw new Error()
+    })
 
+    const promise = await sut.handle(makeFakeRequest())
+    expect(promise).toEqual( {
+    statusCode: 500,
+    body: new ServerError('anyError')
+    }) 
+
+  })
 
 
 })
