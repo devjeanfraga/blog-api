@@ -14,6 +14,10 @@ const makeMockedNodemailer = (): jest.Mocked<typeof nodemailer> => {
   return mockedNodemailer
 }
 
+const makeToThrow = (): never => {
+  throw new Error()
+}
+
 const makeFakeSendMailParams = (): SendMailParams => ({
   to: 'any@mail.com',
   subject: 'any-subject',
@@ -69,6 +73,15 @@ describe('NodemailerAdapter', () => {
         ...params
       }
     )
+  })
+
+  it('Should throw if sendMail throws', async () => {
+    const { sut,  mockedNodemailer } = makeSut()
+    jest
+    .spyOn( mockedNodemailer.createTransport(), 'sendMail')
+    .mockImplementationOnce(makeToThrow) //nao precisa executar
+    const promise =  sut.sendMail(makeFakeSendMailParams())
+    await expect(promise).rejects.toThrow()
   })
 })
 
