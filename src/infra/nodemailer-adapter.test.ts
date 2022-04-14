@@ -1,0 +1,63 @@
+import * as nodemailer from 'nodemailer' 
+//import all like this cause have many override
+import { NodemailerAdapter } from './nodemailer-adapter'
+import { SendMailParams } from '@src/domain/usecases/send-mail'
+
+jest.mock('nodemailer', () => ({
+   createTransport: jest.fn().mockReturnValue({
+     sendMail: jest.fn().mockReturnValue(( mailoptions: any, callback: any ) => {})
+   })
+}))
+
+const makeMockedNodemailer = (): jest.Mocked<typeof nodemailer> => {
+  const mockedNodemailer = nodemailer as jest.Mocked< typeof nodemailer>
+  return mockedNodemailer
+}
+
+const makeFakeSendMailParams = (): SendMailParams => ({
+  to: 'any@mail.com',
+  subject: 'any-subject',
+  text: 'any-text'
+})
+
+interface SutTypes {
+  sut: NodemailerAdapter,
+  mockedNodemailer: jest.Mocked<typeof nodemailer>
+}
+
+const makeSut = (): SutTypes => {
+  const mockedNodemailer = makeMockedNodemailer()
+  const sut = new NodemailerAdapter(
+    'server.mail@mail.com',
+    'smtp.ethereal.email',
+    'any-user',
+    'any-pass',
+     1234,
+    )
+  return {
+    sut,
+    mockedNodemailer
+  }
+}
+
+describe('NodemailerAdapter', () => {
+  it('Should createTransport with correct values', async () => {
+    const { sut, mockedNodemailer } = makeSut()
+    //const spySendMail = jest.spyOn( mockedNodemailer, 'createTransport')
+
+    await sut.sendMail(makeFakeSendMailParams())
+    expect(mockedNodemailer.createTransport).toHaveBeenCalledWith(
+      {
+        host: 'smtp.ethereal.email',
+        port: 1234,
+        auth: {
+          user: 'any-user',
+          pass: 'any-pass',
+        }
+      } 
+    )
+  })
+
+})
+
+
