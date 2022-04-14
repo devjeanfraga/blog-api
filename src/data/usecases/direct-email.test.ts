@@ -1,4 +1,3 @@
-import { AccountModel } from "@src/domain/model/account-model"
 import { SendMailParams } from "@src/domain/usecases/send-mail"
 import { NodemailerSendMail } from "../protocols/nodemailer-send-mail"
 import { DirectEmail } from "./direct-email"
@@ -37,6 +36,7 @@ const makeSut = (): SutTypes => {
 }
 
 describe('DirectEmail UseCase', () => {
+
   it('Should calls NodemailerSendMail with correct values', async () => {
     const { sut, nodemailerSendMailStub } = makeSut()
     const spySendMail = jest.spyOn( nodemailerSendMailStub, 'sendMail' )
