@@ -14,18 +14,21 @@ export class NodemailerAdapter implements NodemailerSendMail {
   ) {}
 
   public async sendMail(params: SendMailParams): Promise<void> {
-    nodemailer.createTransport(
-      {
-        host: this.host,
-        port: this.port,
-        auth: {
-          user: this.user,
-          pass: this.pass
-        }
+    const transport = nodemailer.createTransport({
+      host: this.host,
+      port: this.port,
+      auth: {
+        user: this.user,
+        pass: this.pass
       }
-    ) 
-    
-  }
+    })
 
+    await transport.sendMail({
+      from: this.from,
+      to: params.to,
+      subject: params.subject,
+      text: params.text
+    })
+  }
 
 }
