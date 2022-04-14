@@ -41,7 +41,7 @@ const makeSut = (): SutTypes => {
 }
 
 describe('NodemailerAdapter', () => {
-  it('Should createTransport with correct values', async () => {
+  it('Should call createTransport with correct values', async () => {
     const { sut, mockedNodemailer } = makeSut()
     //const spySendMail = jest.spyOn( mockedNodemailer, 'createTransport')
 
@@ -58,6 +58,18 @@ describe('NodemailerAdapter', () => {
     )
   })
 
+  it('Shoud call sendMail with correct values', async () => {
+    const { sut, mockedNodemailer } = makeSut()
+    const spySendMail = jest.spyOn( mockedNodemailer.createTransport(), 'sendMail')
+    const params = makeFakeSendMailParams()
+    await sut.sendMail(params)
+    expect(spySendMail).toHaveBeenCalledWith(
+      {
+        from: 'server.mail@mail.com',
+        ...params
+      }
+    )
+  })
 })
 
 
