@@ -6,7 +6,7 @@ export class DirectEmail  implements SendMail {
   constructor( private readonly nodemailerSendMail: NodemailerSendMail) {}
 
   public async sendMail ( params: SendMailParams ): Promise<void> {
-     await this.nodemailerSendMail.sendMail( params )
+    await this.nodemailerSendMail.sendMail( params )
      return null
   }
 }
