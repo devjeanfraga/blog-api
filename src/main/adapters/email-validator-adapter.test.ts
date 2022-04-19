@@ -1,10 +1,14 @@
 import validator from "validator"
 import { EmailValidatorAdapter } from './email-validator-adapter'
 
-jest.mock('validator')
-const makeSut = (): EmailValidatorAdapter => {
-  return new EmailValidatorAdapter()
-}
+jest.mock('validator').fn(()=> ({
+  isEmail():boolean {
+    return true
+  }
+}))
+
+const makeSut = (): EmailValidatorAdapter => new EmailValidatorAdapter()
+
 
 describe('EmailValidadtorAdapter', () => {
   it('Should call isEmail with correct values', () => {
@@ -13,4 +17,12 @@ describe('EmailValidadtorAdapter', () => {
     sut.isValidEmail('any@mail.com')
     expect(isValidSpy).toHaveBeenCalledWith('any@mail.com')
   })
+
+  it('Should return true if isEmail ruturns true', async () => {
+    const sut = makeSut()
+    const isValidEmail =  sut.isValidEmail('any@mail.com')
+    expect(isValidEmail).toBeTruthy()
+  })
+
+  
 })
