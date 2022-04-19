@@ -17,6 +17,7 @@
     "@types/module-alias": "^2.0.1",
     "@types/mongoose": "^5.11.97",
     "@types/nodemailer": "^6.4.4",
+    "@types/validator": "^13.7.2",
     "@typescript-eslint/eslint-plugin": "^5.16.0",
     "@typescript-eslint/parser": "^5.16.0",
     "eslint": "7.12.1",
@@ -37,6 +38,7 @@
     "config": "^3.3.7",
     "module-alias": "^2.2.2",
     "mongoose": "^6.3.0",
-    "nodemailer": "^6.7.3"
+    "nodemailer": "^6.7.3",
+    "validator": "^13.7.0"
   }
 }
