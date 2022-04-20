@@ -3,6 +3,8 @@ import { NodemailerSendMail } from "../protocols/nodemailer-send-mail"
 import { DirectEmail } from "./direct-email"
 import {AccountModel} from '@src/domain/model/account-model'
 import { Encrypter } from "../protocols/encrypter"
+import { GenerateUrl } from "../protocols/generate-url"
+
 
 
 const makeEncrypter = (): Encrypter => {
@@ -12,6 +14,15 @@ const makeEncrypter = (): Encrypter => {
     }
   }
   return new EncrypterStub()
+}
+
+const makeGenerateUrl = (): GenerateUrl => {
+  class GenerateURLStub implements GenerateUrl {
+    public generate(route: string, token: string): string {
+      return 'any-adress'
+    }
+  }
+  return new GenerateURLStub()
 }
 const makeNodemailerSendMail = (): NodemailerSendMail => {
   class NodemailerSendMailStub implements NodemailerSendMail {
@@ -42,17 +53,20 @@ const makeFakeSendMailParams = (): SendMailParams => ({
 interface SutTypes {
   sut: DirectEmail,
   encrypterStub: Encrypter
+  generateUrlStub: GenerateUrl
   nodemailerSendMailStub: NodemailerSendMail
 }
 
 const makeSut = (): SutTypes => {
   const encrypterStub = makeEncrypter()
+  const generateUrlStub = makeGenerateUrl()
   const nodemailerSendMailStub = makeNodemailerSendMail()
-  const sut = new DirectEmail(encrypterStub, nodemailerSendMailStub )
+  const sut = new DirectEmail(encrypterStub, generateUrlStub, nodemailerSendMailStub )
   return {
     sut,
+    encrypterStub,
+    generateUrlStub,
     nodemailerSendMailStub,
-    encrypterStub
   }
 }
 
@@ -73,6 +87,15 @@ describe('DirectEmail UseCase', () => {
     expect(promise).rejects.toThrow()
   })
 
+  it('Should calls GenerateUrl with correct values', async () => {
+    const { sut, generateUrlStub } = makeSut()
+    const spyGenerate = jest.spyOn( generateUrlStub, 'generate')
+
+    await sut.sendMail(makeFakeSendMailParams())
+    const params = { route: '/user/check-email/', token: 'any-token'}
+    expect(spyGenerate).toHaveBeenCalledWith(params.route, params.token)
+  })
+
   it('Should calls NodemailerSendMail with correct values', async () => {
     const { sut, nodemailerSendMailStub } = makeSut()
     const spySendMail = jest.spyOn( nodemailerSendMailStub, 'sendMail' )
@@ -81,7 +104,7 @@ describe('DirectEmail UseCase', () => {
     expect(spySendMail).toHaveBeenCalledWith({
       to: 'any@mail.com',
       subject: 'any-subject',
-      text: 'any-text'
+      text: 'any-text: any-adress'
     })
   })
 
