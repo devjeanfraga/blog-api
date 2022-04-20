@@ -3,6 +3,9 @@
     "db": {
       "url": "mongodb://127.0.0.1:27017/blog-api"
     },
+    "encrypter": {
+      "secretKey": "alohomora"
+    },
     "smtp" : {
       "mail": "server.mail@mail.com",
       "host": "smtp.ethereal.email",
