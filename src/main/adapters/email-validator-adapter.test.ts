@@ -30,4 +30,6 @@ describe('EmailValidadtorAdapter', () => {
     const isValidEmail =  sut.isValidEmail('any@mail.com')
     expect(isValidEmail).toBeFalsy()
   })
+
+  
 })
