@@ -65,6 +65,14 @@ describe('DirectEmail UseCase', () => {
     expect(spyEncrypt).toHaveBeenCalledWith(makeFakeAccount().email)
   })
 
+  it('Should throw if Encrypter throws ', async () => {
+    const {sut, encrypterStub } = makeSut()
+    jest.spyOn(encrypterStub, 'encrypt').mockImplementationOnce(throwError)
+
+    const promise = sut.sendMail(makeFakeSendMailParams())
+    expect(promise).rejects.toThrow()
+  })
+
   it('Should calls NodemailerSendMail with correct values', async () => {
     const { sut, nodemailerSendMailStub } = makeSut()
     const spySendMail = jest.spyOn( nodemailerSendMailStub, 'sendMail' )
@@ -79,7 +87,7 @@ describe('DirectEmail UseCase', () => {
 
   it('Should throw if NodemailerSendMail throws', async () => {
     const { sut, nodemailerSendMailStub } = makeSut()
-    jest.spyOn( nodemailerSendMailStub, 'sendMail').mockImplementationOnce( throwError)
+    jest.spyOn( nodemailerSendMailStub, 'sendMail').mockImplementationOnce(throwError)
     const promise = sut.sendMail(makeFakeSendMailParams())
     await expect(promise).rejects.toThrow()
   })
