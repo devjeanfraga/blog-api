@@ -2,9 +2,11 @@ import * as nodemailer from 'nodemailer'
 //import all like this cause have many override
 import { NodemailerAdapter } from './nodemailer-adapter'
 import { SendMailParams } from '@src/domain/usecases/send-mail'
+import { promises } from 'nodemailer/lib/xoauth2'
 
 jest.mock('nodemailer', () => ({
-   createTransport: jest.fn().mockReturnValue({
+  createTestAccount: jest.fn(async () => {Promise.resolve()}),
+  createTransport: jest.fn().mockReturnValue({
      sendMail: jest.fn().mockReturnValue(( mailoptions: any, callback: any ) => {})
    })
 }))
@@ -20,7 +22,7 @@ const makeToThrow = (): never => {
 
 const makeFakeSendMailParams = (): SendMailParams => ({
   to: 'any@mail.com',
-  subject: 'any-subject',
+  subject: 'Test Verification Email',
   text: 'any-text'
 })
 
@@ -45,6 +47,13 @@ const makeSut = (): SutTypes => {
 }
 
 describe('NodemailerAdapter', () => {
+
+  it('Should calls creatTestAccount if subject to be "Test Verification Email"', async () => {
+    const { sut, mockedNodemailer } = makeSut()
+   // const spyCreateTestAccount = jest.spyOn( mockedNodemailer, 'createTestAccount')
+    await sut.sendMail(makeFakeSendMailParams())
+    expect(mockedNodemailer.createTestAccount).toBeCalled()
+  })
   
   it('Should call createTransport with correct values', async () => {
     const { sut, mockedNodemailer } = makeSut()
@@ -57,7 +66,7 @@ describe('NodemailerAdapter', () => {
         port: 1234,
         auth: {
           user: 'any-user',
-          pass: 'any-pass',
+          pass: 'any-pass'
         }
       } 
     )
