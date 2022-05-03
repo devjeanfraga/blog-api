@@ -1,7 +1,9 @@
-import { AccountMongoRepository } from "./account-mongo-repository"
-import { MongoHelper } from "../mongo-helper"
-import { default as AccountMongooseModel } from '../models/account-model'
-import { AccountModel } from "@src/domain/model/account-model"
+import { 
+  AccountMongoRepository,
+  MongoHelper,
+  AccountMongooseModel,
+  AccountModel,
+} from "./account-mongo-repository-protocols"
 import * as config from 'config'
 
 describe('AccountMongoRepository', () => {
@@ -39,3 +41,7 @@ describe('AccountMongoRepository', () => {
 
   })
 })
+
+// import { MongoHelper } from "../mongo-helper"
+// import { default as AccountMongooseModel } from '../models/account-model'
+// import { AccountModel } from "@src/domain/model/account-model"

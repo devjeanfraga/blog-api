@@ -1,7 +1,7 @@
-import { AddAccountRepository } from "@src/data/protocols/add-account-repository";
-import { AccountModel } from "@src/domain/model/account-model";
-import { AddAccountModel } from "@src/domain/usecases/add-account";
-import { default as AccountMongooseModel} from '@src/infra/db/models/account-model'
+import { AddAccountRepository } from "../../../data/protocols/add-account-repository";
+import { AccountModel } from "../../../domain/model/account-model";
+import { AddAccountModel } from "../../../domain/usecases/add-account";
+import { default as AccountMongooseModel} from '../models/account-model'
 import { MongoHelper } from "../mongo-helper";
 
 export class AccountMongoRepository implements AddAccountRepository {

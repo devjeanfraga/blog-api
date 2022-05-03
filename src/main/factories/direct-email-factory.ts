@@ -1,8 +1,11 @@
-import { DirectEmail } from "@src/data/usecases/direct-email"
-import { SendMail } from "@src/domain/usecases/send-mail"
-import { JwtAdapter } from "@src/infra/cryptography/jwt-adapter"
-import { NodemailerAdapter } from "@src/infra/mail/nodemailer-adapter"
-import { GenerateUrl } from '@src/data/protocols/generate-url'
+import { 
+  DirectEmail,
+  SendMail,
+  JwtAdapter,
+  NodemailerAdapter,
+  GenerateUrl
+} from './direct-email-factory-protocols'
+
 import * as config from 'config'
 import { IConfig } from "config"
 
@@ -17,3 +20,8 @@ export const makeDirectEmail = (): SendMail => {
   
   return new DirectEmail(jwtAdapter, generateUrl, nodeMailerAdapter)
 }
+
+// import { SendMail } from "@src/domain/usecases/send-mail"
+// import { JwtAdapter } from "@src/infra/cryptography/jwt-adapter"
+// import { NodemailerAdapter } from "@src/infra/mail/nodemailer-adapter"
+// import { GenerateUrl } from '@src/data/protocols/generate-url'
