@@ -1,9 +1,10 @@
+import  { Request, Response} from 'express'
 import { Controller } from "@src/presentation/protocols/controller";
 import { HttpRequest } from "@src/presentation/protocols/http";
 
 
 export const adapterRouter = (controller: Controller) => {
-  return  async ( req, res ) => {
+  return  async ( req: Request, res: Response ) => {
 
     const httpRequest: HttpRequest = {  body: req.body }
 
