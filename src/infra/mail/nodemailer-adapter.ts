@@ -14,33 +14,32 @@ export class NodemailerAdapter implements NodemailerSendMail {
   ) {}
 
   public async sendMail(params: SendMailParams): Promise<void> {
-    let transport;
+    let transportConfig;
 
     if (params.subject === 'Test Verification Email') {
-
       const configTestEmail = await nodemailer.createTestAccount()
-      const testAccount = { host: this.host, auth: configTestEmail }
-      transport = nodemailer.createTransport(testAccount)
-      
+      transportConfig = { host: this.host, auth: configTestEmail }
+    
     } else {
-
-      transport = nodemailer.createTransport({
+      transportConfig = {
         host: this.host,
         port: this.port,
-        auth: {
-          user: this.user,
-          pass: this.pass
-        }
-      })
-
+        auth: { user: this.user, pass: this.pass }
+      }
     }
 
-    await transport.sendMail({
+    const transport = nodemailer.createTransport(transportConfig)
+    const info = await transport.sendMail({
       from: this.from,
       to: params.to,
       subject: params.subject,
       text: params.text
     })
+    
+    if ( process.env.NODE_ENV !== 'production' ) { 
+      //para recurperar o link do email teste
+      console.log("URL : " + nodemailer.getTestMessageUrl(info));
+    };
   }
 
 }
