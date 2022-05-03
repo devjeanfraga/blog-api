@@ -1,11 +1,18 @@
-import { Controller } from "@src/presentation/protocols/controller"
-import { HttpRequest, HttpResponse } from "@src/presentation/protocols/http"
-import { EmailValidator } from "@src/presentation/protocols/email-validator"
-import { MissingParamError } from "@src/presentation/errors/missing-param-error"
-import { InvalidParamError } from "@src/presentation/errors/invalid-param-error"
-import { AddAccount } from "@src/domain/usecases/add-account"
-import { badRequest, ok, serverError } from "@src/presentation/helpers/http-helpers"
-import { SendMail } from "@src/domain/usecases/send-mail"
+import { 
+  Controller,
+  HttpRequest,
+  HttpResponse,
+  EmailValidator,
+  MissingParamError,
+  InvalidParamError,
+  AddAccount,
+  badRequest,
+  ok, 
+  serverError,
+  SendMail
+
+} from './signup-protocols'
+
 
 
 
@@ -48,7 +55,7 @@ export class SignUpController implements Controller{
 
       this.sendMail.sendMail({
         to: email,
-        subject: 'Verification Email',
+        subject: 'Test Verification Email',
         text: `Welcome ${name}, click on link to verify your email`
       })
 
