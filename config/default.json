@@ -1,5 +1,6 @@
 {
   "app": {
+    "port": 8080,
     "db": {
       "url": "mongodb://127.0.0.1:27017/blog-api"
     },
@@ -7,7 +8,7 @@
       "secretKey": "alohomora"
     },
     "smtp" : {
-      "mail": "server.mail@mail.com",
+      "email": "server.mail@mail.com",
       "host": "smtp.ethereal.email",
       "user": "admin",
       "pass": "admin",
