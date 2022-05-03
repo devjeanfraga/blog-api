@@ -216,7 +216,7 @@ describe('SignUp Controller', () => {
     await sut.handle(makeFakeRequest())
     expect(spySendMail).toHaveBeenCalledWith({
       to: makeFakeAccount().email,
-      subject: 'Verification Email',
+      subject: 'Test Verification Email',
       text: `Welcome ${ makeFakeAccount().name }, click on link to verify your email`
     })
   })
