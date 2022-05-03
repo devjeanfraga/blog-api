@@ -54,12 +54,25 @@ describe('NodemailerAdapter', () => {
     await sut.sendMail(makeFakeSendMailParams())
     expect(mockedNodemailer.createTestAccount).toBeCalled()
   })
-  
-  it('Should call createTransport with correct values', async () => {
+
+  it('Should call createTransport with correct values if subject to be "Test Verification Email"', async () => {
     const { sut, mockedNodemailer } = makeSut()
     //const spySendMail = jest.spyOn( mockedNodemailer, 'createTransport')
 
     await sut.sendMail(makeFakeSendMailParams())
+    expect(mockedNodemailer.createTransport).toHaveBeenCalledWith(
+      {
+        host: 'smtp.ethereal.email',
+        auth: undefined
+      } 
+    )
+  })
+  
+  it('Should call createTransport with correct values', async () => {
+    const { sut, mockedNodemailer } = makeSut()
+    //const spySendMail = jest.spyOn( mockedNodemailer, 'createTransport')
+    const params = { to: 'any@mail.com', subject: 'Verification Email', text: 'any-text' }
+    await sut.sendMail(params)
     expect(mockedNodemailer.createTransport).toHaveBeenCalledWith(
       {
         host: 'smtp.ethereal.email',
