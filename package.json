@@ -6,7 +6,8 @@
   "author": "Jean Fraga <jeandevjs@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "test:unit": "jest --runInBand",
+    "start": "ts-node-dev --transpile-only src/main/server.ts",
+    "test": "jest --runInBand",
     "lint": "eslint ./src --ext .ts",
     "lint:fix": "eslint ./src --ext .ts --fix"
   },
@@ -19,6 +20,7 @@
     "@types/module-alias": "^2.0.1",
     "@types/mongoose": "^5.11.97",
     "@types/nodemailer": "^6.4.4",
+    "@types/supertest": "^2.0.12",
     "@types/validator": "^13.7.2",
     "@typescript-eslint/eslint-plugin": "^5.16.0",
     "@typescript-eslint/parser": "^5.16.0",
@@ -43,6 +45,8 @@
     "module-alias": "^2.2.2",
     "mongoose": "^6.3.0",
     "nodemailer": "^6.7.3",
+    "sucrase": "^3.21.0",
+    "supertest": "^6.2.3",
     "validator": "^13.7.0"
   }
 }
